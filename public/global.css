@@ -1,0 +1,17 @@
+html {
+	width: 100vw;
+	margin: 0;
+	padding: 0;
+	font-size: 16px;
+}
+
+body {
+	width: 95vw;
+	border: 0.01rem solid orange;
+	font-family: "Source Code Pro", monospace;
+}
+
+@font-face {
+	font-family: "Source Code Pro", monospace;
+	src: url("https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap");
+}
