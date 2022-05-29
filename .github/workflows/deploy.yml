@@ -26,6 +26,16 @@ jobs:
           npm install
         shell: bash
 
+      - name: Add wasm Rust target
+        run: |
+          rustup target add wasm32-unknown-unknown
+        shell: bash
+
+      - name: Install wasm-pack
+        run: |
+          curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+        shell: bash
+
       - name: Build Site
         run: |
           npm run build
