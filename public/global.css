@@ -5,10 +5,16 @@ html {
 	font-size: 16px;
 }
 
+::-webkit-scrollbar {
+	display: none;
+}
+
 body {
-	width: 95vw;
+	width: 98vw;
+	height: 98vh;
 	border: 0.01rem solid orange;
 	font-family: "Source Code Pro", monospace;
+	margin: 1vh auto auto auto;
 }
 
 @font-face {

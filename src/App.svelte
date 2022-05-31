@@ -90,8 +90,18 @@
 <style>
 	main {
 		font-family: "Source Code Pro", monospace;
-		padding: 1vh 1vw;
+		padding: 0.5%;
 		margin: 0 auto;
+		max-width: none;
+		width: 98%;
+		height: 98%;
+		display: flex;
+		flex-direction: column;
+		overflow-y: scroll;
+		border: 2px solid orange;
+	}
+	::-webkit-scrollbar {
+		display: none;
 	}
 
 	@media (min-width: 640px) {
