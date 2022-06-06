@@ -2,17 +2,18 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct CommandOutput {
-	pub user: String,
-	pub path: String,
-	pub command: String,
-	pub output: String,
+    pub user: String,
+    pub path: String,
+    pub command: String,
+    pub output: String,
 }
 
+#[rustfmt::skip]
 pub fn help_output() -> String {
-	const VERSION: &str = env!("CARGO_PKG_VERSION");
+    const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-	format!(
-		"karthikrangasai.github.io v{}
+    format!(
+        "karthikrangasai.github.io v{}
 
 COMMANDS:
 
@@ -23,14 +24,14 @@ COMMANDS:
 	help      Display the current message.
 
 	",
-		VERSION
-	)
+        VERSION
+    )
 }
 
 pub fn no_args_for_command_output(command: String, command_args: Vec<String>) -> String {
-	format!(
-		"`{}` command expects no arguments. Provided argument(s) `{}`.",
-		command,
-		command_args.join(",")
-	)
+    format!(
+        "`{}` command expects no arguments. Provided argument(s) `{}`.",
+        command,
+        command_args.join(",")
+    )
 }

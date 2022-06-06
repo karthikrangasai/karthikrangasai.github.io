@@ -13,5 +13,5 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 #[wasm_bindgen]
 pub fn instantiate_terminal() -> Terminal {
-	Terminal::new()
+    Terminal::new()
 }
