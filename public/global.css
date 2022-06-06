@@ -10,11 +10,11 @@ html {
 }
 
 body {
-	width: 98vw;
+	width: 99vw;
 	height: 98vh;
 	border: 0.01rem solid orange;
 	font-family: "Source Code Pro", monospace;
-	margin: 1vh auto auto auto;
+	margin: 1vh auto;
 }
 
 @font-face {

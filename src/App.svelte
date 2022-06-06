@@ -93,12 +93,11 @@
 		padding: 0.5%;
 		margin: 0 auto;
 		max-width: none;
-		width: 98%;
+		width: 99%;
 		height: 98%;
 		display: flex;
 		flex-direction: column;
 		overflow-y: scroll;
-		border: 2px solid orange;
 	}
 	::-webkit-scrollbar {
 		display: none;
