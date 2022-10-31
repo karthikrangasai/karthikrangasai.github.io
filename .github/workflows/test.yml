@@ -1,0 +1,57 @@
+name: Tests
+on:
+  pull_request:
+    branches:
+      - master
+jobs:
+  setup:
+    runs-on: ubuntu-20.04
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+
+      - name: Setup Node JS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install Node JS Dependencies
+        shell: bash
+        run: npm install
+
+      - name: Add wasm Rust target
+        shell: bash
+        run: rustup target add wasm32-unknown-unknown
+
+      - name: Install wasm-pack
+        shell: bash
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+  build:
+    needs: setup
+    runs-on: ubuntu-20.04
+    permissions:
+      contents: write
+    steps:
+      - name: Building the project
+        shell: bash
+        run: npm run build
+
+  test:
+    needs: build
+    runs-on: ubuntu-20.04
+    permissions:
+      contents: write
+    steps:
+      - name: Run `terminal` tests
+        shell: bash
+        run: |
+          cd terminal
+          cargo test
+          cd ..
+
+      - name: Run svelte tests
+        run: |
+          echo "Running svelte tests"
