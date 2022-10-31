@@ -1,7 +1,6 @@
-mod utils;
-
 mod terminal;
-use terminal::terminal::Terminal;
+mod utils;
+use crate::terminal::terminal::Terminal;
 
 use wasm_bindgen::prelude::*;
 

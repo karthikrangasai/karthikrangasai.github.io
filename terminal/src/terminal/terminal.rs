@@ -1,91 +1,36 @@
 use wasm_bindgen::prelude::*;
+extern crate reqwest;
 extern crate web_sys;
-
-use super::commands::help_output;
-use super::commands::no_args_for_command_output;
-use super::commands::CommandOutput;
-use super::utils::log;
+use super::filesystem::FileSystem;
+use crate::terminal::commands::{common::CommandOutput, CommandRunner};
 
 #[wasm_bindgen]
+#[derive(Debug)]
 pub struct Terminal {
     user: String,
+    file_system: FileSystem,
     machine_name: String,
     current_path: String,
+    command_runner: CommandRunner,
 }
 
 impl Terminal {
-    fn concatenate_paths(&self, mut root: String, dir: String) -> String {
-        root.push_str("/");
-        root.push_str(&dir);
-        root
-    }
-
-    fn home_path(&self) -> String {
-        self.concatenate_paths("/home".to_string(), self.user())
-    }
-
-    pub fn get_path(&self) -> String {
-        self.current_path().replacen("~", self.home_path().as_ref(), 1)
-    }
-
     pub fn new() -> Terminal {
         let user: String = String::from("guest");
+        let file_system: FileSystem = FileSystem::new(user.clone());
         let machine_name: String = String::from("karthikrangasai.github.io");
-        let current_path: String = String::from("~");
+        let current_path: String = file_system.terminal_display_path();
+
+        // let fs_pointer: Rc<FileSystem> = Rc::new(file_system);
+        let command_runner: CommandRunner = CommandRunner::new();
 
         return Terminal {
             user,
+            file_system,
             machine_name,
             current_path,
+            command_runner,
         };
-    }
-
-    fn parse_command(&self, full_command: String) -> (String, Option<Vec<String>>) {
-        let mut tokens: Vec<String> = full_command.split(" ").map(str::to_string).collect();
-        let args = tokens.split_off(1);
-        let command: String = tokens[0].clone();
-        if args.len() == 0 {
-            return (command, None);
-        }
-        (command, Some(args))
-    }
-
-    fn execute_command(&self, command: String, command_args: Vec<String>) -> String {
-        log!("Running command: {} {:?}", command, command_args);
-        match command.as_str() {
-            "help" => {
-                if command_args.len() != 0 {
-                    return no_args_for_command_output(command, command_args);
-                }
-                return help_output();
-            }
-            "whoami" => {
-                if command_args.len() != 0 {
-                    return no_args_for_command_output(command, command_args);
-                }
-                return self.user();
-            }
-            "about" => {
-                if command_args.len() != 0 {
-                    return no_args_for_command_output(command, command_args);
-                }
-                return "".to_string();
-            }
-            "pwd" => {
-                if command_args.len() != 0 {
-                    return no_args_for_command_output(command, command_args);
-                }
-                return self.get_path();
-            }
-            "clear" => {
-                if command_args.len() != 0 {
-                    return no_args_for_command_output(command, command_args);
-                }
-                return "".to_string();
-            }
-            _ => log!("Invalid command: {} {:?}", command, command_args),
-        };
-        format!("Invalid command: `{}`.", command)
     }
 }
 
@@ -96,19 +41,9 @@ impl Terminal {
         self.user.clone()
     }
 
-    #[wasm_bindgen(setter)]
-    pub fn set_user(&mut self, user: String) {
-        self.user = user;
-    }
-
     #[wasm_bindgen(getter)]
     pub fn machine_name(&self) -> String {
         self.machine_name.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_machine_name(&mut self, machine_name: String) {
-        self.machine_name = machine_name;
     }
 
     #[wasm_bindgen(getter)]
@@ -116,30 +51,13 @@ impl Terminal {
         self.current_path.clone()
     }
 
-    #[wasm_bindgen(setter)]
-    pub fn set_current_path(&mut self, current_path: String) {
-        self.current_path = current_path;
-    }
+    pub fn run_command(&mut self, full_command: String) -> JsValue {
+        let file_system: &mut FileSystem = &mut self.file_system;
+        let command_output: String = self.command_runner.execute_command(full_command.clone(), file_system);
 
-    pub fn run_command(&self, full_command: String) -> JsValue {
-        let (command, some_args) = self.parse_command(full_command.clone());
-        let args: Vec<String>;
+        let js_output: CommandOutput =
+            CommandOutput::new(self.user(), self.current_path(), full_command.clone(), command_output);
 
-        if some_args.is_none() {
-            args = [].to_vec();
-        } else {
-            args = some_args.unwrap();
-        }
-
-        let command_output: String = self.execute_command(command.clone(), args.clone());
-
-        let js_output = CommandOutput {
-            user: self.user(),
-            path: self.current_path(),
-            command: full_command.clone(),
-            output: command_output,
-        };
-
-        JsValue::from_serde(&js_output).unwrap()
+        serde_wasm_bindgen::to_value(&js_output).unwrap()
     }
 }
