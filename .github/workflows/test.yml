@@ -4,7 +4,7 @@ on:
     branches:
       - master
 jobs:
-  setup:
+  build-and-test:
     runs-on: ubuntu-20.04
     permissions:
       contents: write
@@ -29,22 +29,10 @@ jobs:
         shell: bash
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
-  build:
-    needs: setup
-    runs-on: ubuntu-20.04
-    permissions:
-      contents: write
-    steps:
       - name: Building the project
         shell: bash
         run: npm run build
 
-  test:
-    needs: build
-    runs-on: ubuntu-20.04
-    permissions:
-      contents: write
-    steps:
       - name: Run `terminal` tests
         shell: bash
         run: |
